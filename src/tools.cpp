@@ -50,8 +50,6 @@ unsigned long getCRC(const char *buf, int nLength) {
     return crc;
 }
 
-
-//����ֲ�汾 wstring => string
 std::string ws2s(const std::wstring &ws) {
     std::string curLocale = setlocale(LC_ALL, "");
     const wchar_t *_Source = ws.c_str();
@@ -65,7 +63,6 @@ std::string ws2s(const std::wstring &ws) {
     return result;
 }
 
-//����ֲ�汾 string => wstring
 std::wstring s2ws(const std::string &s) {
     std::string curLocale = setlocale(LC_ALL, "");
     const char *_Source = s.c_str();
@@ -181,27 +178,27 @@ string unicodeToUTF8(const wstring &src) {
 }
 
 std::string UnicodeToUTF8(const std::wstring &wstr) {
-    std::string ret; /*
+    std::string ret; 
      try {
              std::wstring_convert< std::codecvt_utf8<wchar_t> > wcv;
              ret = wcv.to_bytes(wstr);
      }
      catch (const std::exception& e) {
              std::cerr << e.what() << std::endl;
-     }*/
+     }
     return ret;
 }
 
 std::wstring UTF8ToUnicode(const std::string &str) {
     std::wstring ret;
-    /*
+    
     try {
             std::wstring_convert< std::codecvt_utf8<wchar_t> > wcv;
             ret = wcv.from_bytes(str);
     }
     catch (const std::exception& e) {
             std::cerr << e.what() << std::endl;
-    }*/
+    }
     return ret;
 }
 
@@ -238,6 +235,7 @@ std::wstring ANSIToUnicode(const std::string &str) {
 std::string UTF8ToANSI(const std::string &str) { return UnicodeToANSI(UTF8ToUnicode(str)); }
 
 std::string ANSIToUTF8(const std::string &str) { return UnicodeToUTF8(ANSIToUnicode(str)); }
+
 unsigned long str2addr(const char *ip_addr) {
     unsigned long ip = 0;
     int i = 0, j = 3, l = 0;
@@ -266,7 +264,7 @@ unsigned long str2addr(const char *ip_addr) {
 size_t checkstr(std::string str) { return str.find_first_of("&@%<>|\",;()=+!\\*/*:^."); }
 
 
-//Сдת����д
+
 void UpChar(char *str) {
     int i = 0;
     while (str[i]) {
@@ -275,7 +273,7 @@ void UpChar(char *str) {
     }
     return;
 }
-//Сдת����д
+
 int UpChar(string &astr) {
     char *str;
     try {
