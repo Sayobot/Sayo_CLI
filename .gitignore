@@ -1,5 +1,8 @@
+# Cmake Build Folder
 cmake-build-*/
+build/
 
+# IDEs' Configure Folder
 .idea/
 .vs/
 .vscode/
