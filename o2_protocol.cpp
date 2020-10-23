@@ -913,7 +913,7 @@ string O2Protocol::LightingV2(const Json::Value& data)
 		}
 		if (led_number == 0)
 		{
-			root["status"] = -1
+			root["status"] = -1;
 			root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
 		}
 	}
@@ -1573,7 +1573,7 @@ string O2Protocol::Ok_pwd(const Json::Value& data)
 				}
 				else
 				{
-					root["status"] = -1
+					root["status"] = -1;
 					root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
 				}
 			}
