@@ -1,20 +1,12 @@
 #include "http.h"
 #include "tools.h"
 #include <stdio.h>
-
-//#include <Windows.h>
 #include <time.h>
 
 const char *MONTHS[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
 const char *WEEK[7] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 
-
-/** @fn: long CHttpUtil::GetGmtTime(char* szGmtTime)
- *  @brief : ��ȡ������GMTʱ��
- *  @param (out) char * szGmtTime : ���GMTʱ��Ļ��������ⲿ����
- *  @return long : szGmtTime��ʵ�ʳ���
- */
 int GetGmtTime(char *szGmtTime, char l) {
     if (szGmtTime == NULL) {
         return -1;
@@ -112,20 +104,9 @@ int AnalysisRequest(REQUEST &req, char *const buffer) {
                     while (*(strp++) != ' ')
                         ;
                     geturi(buffer, strp);
-                    // if (strchr(buffer, '?'))
-                    //{
-
-                    //}
-                    // else
-                    //{
                     UrlDecode(buffer);
                     UpChar(buffer);
                     req.uri = buffer;
-                    //}
-                    // i = 0;
-                    // while (strp[++i] != ' ');
-                    // strp[i] = 0;
-                    // req.uri = strp;
                 } else {
                     if (strp[0] >= 'A' && strp[0] <= 'Z') {
                         i = 0;
@@ -135,11 +116,7 @@ int AnalysisRequest(REQUEST &req, char *const buffer) {
                             i++;
                         }
                     }
-                    switch (strp[0]) { /*
-                                      case 'c':
-
-                                      case 'h':
-                                              break;*/
+                    switch (strp[0]) {
                         case 0:
                             if (req.type == REQ_POST) {
                                 strp += 2;
