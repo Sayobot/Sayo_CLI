@@ -9,6 +9,7 @@
 #include <string>
 #include <thread>
 #include <time.h>
+#include <codecvt>
 #ifdef WIN32
 #include <Windows.h>
 #include <codecvt>
