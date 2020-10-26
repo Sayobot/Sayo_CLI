@@ -1,4 +1,4 @@
-# Cmake Build Folder
+# CMake Build Folder
 cmake-build-*/
 build/
 
@@ -6,3 +6,6 @@ build/
 .idea/
 .vs/
 .vscode/
+
+# Visual Studio CMake Project Build Folder
+out/
