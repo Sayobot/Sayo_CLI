@@ -1,4 +1,4 @@
-#include "tools.h"
+﻿#include "tools.h"
 
 
 const unsigned long table[] = {

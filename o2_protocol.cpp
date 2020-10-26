@@ -1,4 +1,4 @@
-#include "o2_protocol.h"
+﻿#include "o2_protocol.h"
 #include "script.h"
 
 #ifndef WIN32
@@ -11,7 +11,7 @@
 #define OUT_CHECKSUM this->EpOut.udata[this->EpOut.format.data_len + 3]
 
 
-const char *SeriesModel[DEVICE_IDENTIFICATION_CODE_MAX + 1] = {
+const char* SeriesModel[DEVICE_IDENTIFICATION_CODE_MAX + 1] = {
         "?",
         "??",
         "O2(Standard)2+4Key(s)",
@@ -26,7 +26,7 @@ const char *SeriesModel[DEVICE_IDENTIFICATION_CODE_MAX + 1] = {
 
 string O2Protocol::SearchDrivers(unsigned short vid, unsigned short pid) {
     int devn = 0;
-    struct hid_device_info *devs, *cur_dev;
+    struct hid_device_info* devs, * cur_dev;
 
     devs = hid_enumerate(vid, pid);
 
@@ -44,7 +44,7 @@ string O2Protocol::SearchDrivers(unsigned short vid, unsigned short pid) {
         //if (cur_dev->usage_page > 0xFF)
         {
             printf("Device Found\n  type: %04hx %04hx\n  path: %s\n  serial_number: %ls", cur_dev->vendor_id,
-                   cur_dev->product_id, cur_dev->path, cur_dev->serial_number);
+                cur_dev->product_id, cur_dev->path, cur_dev->serial_number);
             printf("\n");
             printf("  Manufacturer: %ls\n", cur_dev->manufacturer_string);
             printf("  Product:      %ls\n", cur_dev->product_string);
@@ -74,12 +74,13 @@ string O2Protocol::SearchDrivers(unsigned short vid, unsigned short pid) {
                         value["versoin"] = this->EpIn.format.data.data[0] * 256 + this->EpIn.format.data.data[1];
                         if (this->EpIn.format.data_len > 2) {
                             unsigned short model =
-                                    this->EpIn.format.data.info.modelH * 256 + this->EpIn.format.data.info.modelL;
+                                this->EpIn.format.data.info.modelH * 256 + this->EpIn.format.data.info.modelL;
 
                             value["model_code"] = model;
                             if (model >= DEVICE_IDENTIFICATION_CODE_MIN && model <= DEVICE_IDENTIFICATION_CODE_MAX) {
                                 value["model"] = SeriesModel[model];
-                            } else {
+                            }
+                            else {
                                 value["model"] = "unknown " + to_string(model);
                             }
                             if (this->EpIn.format.data_len > 8) {
@@ -90,30 +91,35 @@ string O2Protocol::SearchDrivers(unsigned short vid, unsigned short pid) {
                                 value["support_list"] = value2;
                             }
                         }
-                    } else if (this->EpIn.format.cmd == 2) {
+                    }
+                    else if (this->EpIn.format.cmd == 2) {
                         this->EpOut.format.cmd = 1;
                         hid_write(this->handle, this->EpOut.udata, 64);
                         if (hid_read_timeout(this->handle, this->EpIn.udata, 64, 5) > 0) {
                             unsigned short model =
-                                    this->EpIn.format.data.info.modelH * 256 + this->EpIn.format.data.info.modelL;
+                                this->EpIn.format.data.info.modelH * 256 + this->EpIn.format.data.info.modelL;
                             if (model >= DEVICE_IDENTIFICATION_CODE_MIN && model <= DEVICE_IDENTIFICATION_CODE_MAX) {
-                                value["mode"] = (string) "bootloader" + SeriesModel[model];
-                            } else {
+                                value["mode"] = (string)"bootloader" + SeriesModel[model];
+                            }
+                            else {
                                 value["mode"] = "bootloader unknown";
                             }
                         }
                         value["versoin"] = this->EpIn.format.data.data;
-                    } else {
+                    }
+                    else {
                         value["mode"] == "unknown";
                     }
 
 
-                } else {
+                }
+                else {
                     value["available"] = false;
                 }
                 hid_close(this->handle);
 
-            } else {
+            }
+            else {
                 value["available"] = false;
             }
             value["path"] = cur_dev->path;
@@ -130,7 +136,7 @@ string O2Protocol::SearchDrivers(unsigned short vid, unsigned short pid) {
                 value["manufacturer_string"] = Json::nullValue;
 
             if (cur_dev->product_string)
-                value["product_string"] = unicodeToUTF8((wstring) cur_dev->product_string).data();
+                value["product_string"] = unicodeToUTF8((wstring)cur_dev->product_string).data();
             else
                 value["product_string"] = Json::nullValue;
 
@@ -146,7 +152,7 @@ string O2Protocol::SearchDrivers(unsigned short vid, unsigned short pid) {
     hid_free_enumeration(cur_dev);
     root["status"] = devn ? 0 : -1;
     if (devn == 0)
-        root["message"] = u8"未找到设备，请检查是否插了或者已被连接？";
+        root["message"] = "未找到设备，请检查是否插了或者已被连接？";
     root["devices"] = devn;
     return root.toStyledString();
 }
@@ -161,8 +167,9 @@ string O2Protocol::Connect(string p, int session) {
         this->connected = 1;
         root["session"] = session;
         root["status"] = 0;
-    } else {
-        root["message"] = u8"打开设备失败了，你插好了吗？重新搜索一下试试？";
+    }
+    else {
+        root["message"] = "打开设备失败了，你插好了吗？重新搜索一下试试？";
         root["status"] = -1;
     }
 
@@ -197,14 +204,16 @@ string O2Protocol::Save() {
         if (this->EpIn.format.cmd != 0) {
             root["error_code"] = this->EpIn.format.cmd;
             root["status"] = -1;
-            root["message"] = u8"保存失败了，，，，要不要再试一次？";
-        } else {
-            root["status"] = 0;
-            root["message"] = u8"恭喜！保存成功了！";
+            root["message"] = "保存失败了，，，，要不要再试一次？";
         }
-    } else {
+        else {
+            root["status"] = 0;
+            root["message"] = "恭喜！保存成功了！";
+        }
+    }
+    else {
         root["status"] = -1;
-        root["message"] = u8"响应超时……可能设备已断开";
+        root["message"] = "响应超时……可能设备已断开";
     }
     return root.toStyledString();
 }
@@ -217,13 +226,14 @@ int O2Protocol::Check() {
     hid_write(this->handle, this->EpOut.udata, HID_DATA_LENGTH);
     if (hid_read_timeout(this->handle, this->EpIn.udata, HID_DATA_LENGTH, 50) > 0) {
         return 0;
-    } else {
+    }
+    else {
         this->connected = 0;
         return -1;
     }
 }
 
-string O2Protocol::Buttons(const Json::Value &data) {
+string O2Protocol::Buttons(const Json::Value& data) {
     std::unique_ptr<Json::StreamWriter> writer(Json::StreamWriterBuilder().newStreamWriter());
     Json::Value root, value, value2;
     root.clear();
@@ -252,18 +262,21 @@ string O2Protocol::Buttons(const Json::Value &data) {
                     value2[3] = this->EpIn.format.data.key.data.keyboard.plain_3;
                     value["values"] = value2;
                     root["data"].append(value);
-                } else {
+                }
+                else {
                     break;
                 }
-            } else {
+            }
+            else {
                 break;
             }
         }
         if (key_number == 0) {
             root["status"] = -1;
-            root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
+            root["message"] = "什么都没读取到呢，可能是设备不支持或已断开连接";
         }
-    } else if (data["method"].asString() == "write") {
+    }
+    else if (data["method"].asString() == "write") {
         this->EpOut.format.id = 2;
         this->EpOut.format.cmd = 6;
         this->EpOut.format.data_len = 8;
@@ -290,21 +303,23 @@ string O2Protocol::Buttons(const Json::Value &data) {
                     value2[3] = this->EpIn.format.data.key.data.keyboard.plain_3;
                     value["values"] = value2;
                     root["data"].append(value);
-                } else {
+                }
+                else {
                     root["status"] = -1;
-                    root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
+                    root["message"] = "什么都没读取到呢，可能是设备不支持或已断开连接";
                     break;
                 }
             }
         }
-    } else {
+    }
+    else {
         root["status"] = -1;
-        root["message"] = u8"read还是write？";
+        root["message"] = "read还是write？";
     }
     return root.toStyledString();
 }
 
-string O2Protocol::Api(const Json::Value &data) {
+string O2Protocol::Api(const Json::Value& data) {
     std::unique_ptr<Json::StreamWriter> writer(Json::StreamWriterBuilder().newStreamWriter());
     Json::Value root, value, value2;
     root.clear();
@@ -332,18 +347,21 @@ string O2Protocol::Api(const Json::Value &data) {
                     }
                     value["values"] = value2;
                     root["data"].append(value);
-                } else {
+                }
+                else {
                     break;
                 }
-            } else {
+            }
+            else {
                 break;
             }
         }
         if (number == 0) {
             root["status"] = -1;
-            root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
+            root["message"] = "什么都没读取到呢，可能是设备不支持或已断开连接";
         }
-    } else if (data["method"].asString() == "write") {
+    }
+    else if (data["method"].asString() == "write") {
         this->EpOut.format.id = 2;
         this->EpOut.format.cmd = data["cmd_code"].asInt();
         this->EpOut.format.data.key.pattern = 1;
@@ -371,21 +389,23 @@ string O2Protocol::Api(const Json::Value &data) {
                     }
                     value["values"] = value2;
                     root["data"].append(value);
-                } else {
+                }
+                else {
                     root["status"] = -1;
-                    root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
+                    root["message"] = "什么都没读取到呢，可能是设备不支持或已断开连接";
                     break;
                 }
             }
         }
-    } else {
+    }
+    else {
         root["status"] = -1;
-        root["message"] = u8"read还是write？";
+        root["message"] = "read还是write？";
     }
     return root.toStyledString();
 }
 
-string O2Protocol::Bootloader(const Json::Value &data) {
+string O2Protocol::Bootloader(const Json::Value& data) {
     std::unique_ptr<Json::StreamWriter> writer(Json::StreamWriterBuilder().newStreamWriter());
     Json::Value root, value, value2;
     root.clear();
@@ -408,14 +428,16 @@ string O2Protocol::Bootloader(const Json::Value &data) {
             }
             value["values"] = value2;
             root["data"].append(value);
-        } else if (this->EpIn.format.cmd == 2) {
+        }
+        else if (this->EpIn.format.cmd == 2) {
             value["code"] = 0;
             value["number"] = 0;
             this->EpIn.format.data.data[this->EpIn.format.data_len] = 0;
-            value2[0] = (char *) this->EpIn.format.data.data;
+            value2[0] = (char*)this->EpIn.format.data.data;
             value["values"] = value2;
             root["data"].append(value);
-        } else {
+        }
+        else {
             root["status"] = -1;
             root["message"] = "不支持的指令";
         }
@@ -426,132 +448,132 @@ string O2Protocol::Bootloader(const Json::Value &data) {
 /*
 string O2Protocol::Firmware_write(const Json::Value& data)
 {
-	std::unique_ptr<Json::StreamWriter> writer(Json::StreamWriterBuilder().newStreamWriter());
-	Json::Value root, value, format;
-	root.clear();
-	root["status"] = 0;
+    std::unique_ptr<Json::StreamWriter> writer(Json::StreamWriterBuilder().newStreamWriter());
+    Json::Value root, value, format;
+    root.clear();
+    root["status"] = 0;
 
-	this->EpOut.format.id = 2;
-	string formatJson;
-	HttpGet((char *)data["data"][0]["uri"].asString().data(), formatJson);
-	Json::Reader reader;
-	reader.parse(formatJson, format);
-	if (format.size())
-	{
-		DWORD firmwareSize = 0;
-		DWORD firmwareWriteSize = 0;
-		char * firmwareBuff = NULL;
-		if (HttpGet(format["firmware_uri"].asString().data(), firmwareBuff, firmwareSize) == 0)
-		{
-			if (firmwareSize)
-			{
-				for (unsigned i = 0; i < format["data"].size(); i++)
-				{
-					this->EpOut.format.cmd = format["data"][i]["code"].asInt();
-					this->EpOut.format.data_len = format["data"][i]["data_len"].asInt();
-					if (format["data"][i]["type"].asString() == "cmd")
-					{
-						DWORD dataLen = 0;
-						for (unsigned f = 0; f < format["data"][i]["format_data"].size(); f++)
-						{
-							if (format["data"][i]["format_data"][f]["type"].asString() == "const")
-							{
-								for (unsigned v = 0; v < format["data"][i]["format_data"][f]["data"].size(); v++)
-								{
-									this->EpOut.format.data.udata[dataLen++] = format["data"][i]["format_data"][f]["data"][v].asInt();
-								}
-							}
-							else if (format["data"][i]["format_data"][f]["type"].asString() == "firmware_len")
-							{
-								DWORD addr = firmwareSize + format["data"][i]["format_data"][f]["offset"].asInt();
-								if (format["data"][i]["format_data"][f]["word"].asString() == "big")
-								{
-									for (int a = 0; a < format["data"][i]["format_data"][f]["len"].asInt(); a++)
-									{
-										this->EpOut.format.data.udata[dataLen++] = addr >> ((format["data"][i]["format_data"][f]["len"].asInt() - a - 1) * 8);
-									}
-								}
-								else
-								{
-									for (int a = format["data"][i]["format_data"][f]["len"].asInt(); a; a++)
-									{
-										this->EpOut.format.data.udata[dataLen++] = addr >> ((format["data"][i]["format_data"][f]["len"].asInt() - a) * 8);
-									}
-								}
-							}
-						}
-						OUT_CHECKSUM = 0;
-						for (int c = 0; c < this->EpOut.format.data_len + 3; c++)
-							OUT_CHECKSUM += this->EpOut.data[c];
-						hid_write(this->handle, this->EpOut.udata, HID_DATA_LENGTH);
-						if (hid_read_timeout(this->handle, this->EpIn.udata, HID_DATA_LENGTH, 1000) > 0)
-						{
-							if (this->EpIn.format.data_len != 0)
-							{
+    this->EpOut.format.id = 2;
+    string formatJson;
+    HttpGet((char *)data["data"][0]["uri"].asString().data(), formatJson);
+    Json::Reader reader;
+    reader.parse(formatJson, format);
+    if (format.size())
+    {
+        DWORD firmwareSize = 0;
+        DWORD firmwareWriteSize = 0;
+        char * firmwareBuff = NULL;
+        if (HttpGet(format["firmware_uri"].asString().data(), firmwareBuff, firmwareSize) == 0)
+        {
+            if (firmwareSize)
+            {
+                for (unsigned i = 0; i < format["data"].size(); i++)
+                {
+                    this->EpOut.format.cmd = format["data"][i]["code"].asInt();
+                    this->EpOut.format.data_len = format["data"][i]["data_len"].asInt();
+                    if (format["data"][i]["type"].asString() == "cmd")
+                    {
+                        DWORD dataLen = 0;
+                        for (unsigned f = 0; f < format["data"][i]["format_data"].size(); f++)
+                        {
+                            if (format["data"][i]["format_data"][f]["type"].asString() == "const")
+                            {
+                                for (unsigned v = 0; v < format["data"][i]["format_data"][f]["data"].size(); v++)
+                                {
+                                    this->EpOut.format.data.udata[dataLen++] = format["data"][i]["format_data"][f]["data"][v].asInt();
+                                }
+                            }
+                            else if (format["data"][i]["format_data"][f]["type"].asString() == "firmware_len")
+                            {
+                                DWORD addr = firmwareSize + format["data"][i]["format_data"][f]["offset"].asInt();
+                                if (format["data"][i]["format_data"][f]["word"].asString() == "big")
+                                {
+                                    for (int a = 0; a < format["data"][i]["format_data"][f]["len"].asInt(); a++)
+                                    {
+                                        this->EpOut.format.data.udata[dataLen++] = addr >> ((format["data"][i]["format_data"][f]["len"].asInt() - a - 1) * 8);
+                                    }
+                                }
+                                else
+                                {
+                                    for (int a = format["data"][i]["format_data"][f]["len"].asInt(); a; a++)
+                                    {
+                                        this->EpOut.format.data.udata[dataLen++] = addr >> ((format["data"][i]["format_data"][f]["len"].asInt() - a) * 8);
+                                    }
+                                }
+                            }
+                        }
+                        OUT_CHECKSUM = 0;
+                        for (int c = 0; c < this->EpOut.format.data_len + 3; c++)
+                            OUT_CHECKSUM += this->EpOut.data[c];
+                        hid_write(this->handle, this->EpOut.udata, HID_DATA_LENGTH);
+                        if (hid_read_timeout(this->handle, this->EpIn.udata, HID_DATA_LENGTH, 1000) > 0)
+                        {
+                            if (this->EpIn.format.data_len != 0)
+                            {
 
-								root["status"] = -1;
-							}
-						}
-					}
-					else if (format["data"][i]["type"].asString() == "data")
-					{
-						while (firmwareWriteSize < (firmwareSize - 16))
-						{
-							DWORD dataLen = 0;
-							for (unsigned f = 0; f < format["data"][i]["format_data"].size(); f++)
-							{
-								if (format["data"][i]["format_data"][f]["type"].asString() == "addr")
-								{
-									DWORD addr = firmwareWriteSize + format["data"][i]["format_data"][f]["offset"].asInt();
-									if (format["data"][i]["format_data"][f]["word"].asString() == "big")
-									{
-										for (int a = 0; a < format["data"][i]["format_data"][f]["len"].asInt(); a++)
-										{
-											this->EpOut.format.data.udata[dataLen++] = addr >> ((format["data"][i]["format_data"][f]["len"].asInt() - a - 1) * 8);
-										}
-									}
-									else
-									{
-										for (int a = format["data"][i]["format_data"][f]["len"].asInt(); a; a++)
-										{
-											this->EpOut.format.data.udata[dataLen++] = addr >> ((format["data"][i]["format_data"][f]["len"].asInt() - a) * 8);
-										}
-									}
-								}
-								else if (format["data"][i]["format_data"][f]["type"].asString() == "const")
-								{
-									for (unsigned v = 0; v < format["data"][i]["format_data"][f]["data"].size(); v++)
-									{
-										this->EpOut.format.data.udata[dataLen++] = format["data"][i]["format_data"][f]["data"][v].asInt();
-									}
-								}
-								else if (format["data"][i]["format_data"][f]["type"].asString() == "firmware_data")
-								{
-									memcpy_s(&this->EpOut.format.data.udata[dataLen], 60 - dataLen, &firmwareBuff[firmwareWriteSize], this->EpOut.format.data.udata[dataLen++] = format["data"][i]["format_data"][f]["len"].asInt());
-									dataLen += format["data"][i]["format_data"][f]["len"].asInt();
-									firmwareWriteSize += format["data"][i]["format_data"][f]["len"].asInt();
-								}
-							}
-							OUT_CHECKSUM = 0;
-							for (int c = 0; c < this->EpOut.format.data_len + 3; c++)
-								OUT_CHECKSUM += this->EpOut.data[c];
-							hid_write(this->handle, this->EpOut.udata, HID_DATA_LENGTH);
-							if (hid_read_timeout(this->handle, this->EpIn.udata, HID_DATA_LENGTH, 1000) > 0)
-							{
-								if (this->EpIn.format.data_len != 0)
-								{
+                                root["status"] = -1;
+                            }
+                        }
+                    }
+                    else if (format["data"][i]["type"].asString() == "data")
+                    {
+                        while (firmwareWriteSize < (firmwareSize - 16))
+                        {
+                            DWORD dataLen = 0;
+                            for (unsigned f = 0; f < format["data"][i]["format_data"].size(); f++)
+                            {
+                                if (format["data"][i]["format_data"][f]["type"].asString() == "addr")
+                                {
+                                    DWORD addr = firmwareWriteSize + format["data"][i]["format_data"][f]["offset"].asInt();
+                                    if (format["data"][i]["format_data"][f]["word"].asString() == "big")
+                                    {
+                                        for (int a = 0; a < format["data"][i]["format_data"][f]["len"].asInt(); a++)
+                                        {
+                                            this->EpOut.format.data.udata[dataLen++] = addr >> ((format["data"][i]["format_data"][f]["len"].asInt() - a - 1) * 8);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        for (int a = format["data"][i]["format_data"][f]["len"].asInt(); a; a++)
+                                        {
+                                            this->EpOut.format.data.udata[dataLen++] = addr >> ((format["data"][i]["format_data"][f]["len"].asInt() - a) * 8);
+                                        }
+                                    }
+                                }
+                                else if (format["data"][i]["format_data"][f]["type"].asString() == "const")
+                                {
+                                    for (unsigned v = 0; v < format["data"][i]["format_data"][f]["data"].size(); v++)
+                                    {
+                                        this->EpOut.format.data.udata[dataLen++] = format["data"][i]["format_data"][f]["data"][v].asInt();
+                                    }
+                                }
+                                else if (format["data"][i]["format_data"][f]["type"].asString() == "firmware_data")
+                                {
+                                    memcpy_s(&this->EpOut.format.data.udata[dataLen], 60 - dataLen, &firmwareBuff[firmwareWriteSize], this->EpOut.format.data.udata[dataLen++] = format["data"][i]["format_data"][f]["len"].asInt());
+                                    dataLen += format["data"][i]["format_data"][f]["len"].asInt();
+                                    firmwareWriteSize += format["data"][i]["format_data"][f]["len"].asInt();
+                                }
+                            }
+                            OUT_CHECKSUM = 0;
+                            for (int c = 0; c < this->EpOut.format.data_len + 3; c++)
+                                OUT_CHECKSUM += this->EpOut.data[c];
+                            hid_write(this->handle, this->EpOut.udata, HID_DATA_LENGTH);
+                            if (hid_read_timeout(this->handle, this->EpIn.udata, HID_DATA_LENGTH, 1000) > 0)
+                            {
+                                if (this->EpIn.format.data_len != 0)
+                                {
 
-									root["status"] = -1;
-								}
-							}
-						}
-					}
+                                    root["status"] = -1;
+                                }
+                            }
+                        }
+                    }
 
-				}
-			}
-		}
-	}
-	return root.toStyledString();
+                }
+            }
+        }
+    }
+    return root.toStyledString();
 }
 */
 const bool rgb_format[64] = {
@@ -621,7 +643,7 @@ const bool rgb_format[64] = {
         false,        //0x3f
 };
 
-string O2Protocol::Lighting(const Json::Value &data) {
+string O2Protocol::Lighting(const Json::Value& data) {
     std::unique_ptr<Json::StreamWriter> writer(Json::StreamWriterBuilder().newStreamWriter());
     Json::Value root, value, value2;
     char colhex[8];
@@ -651,10 +673,11 @@ string O2Protocol::Lighting(const Json::Value &data) {
                         sprintf_s(colhex, "#%02x%02x%02x", this->EpIn.format.data.lamp.data.col.col_r, this->EpIn.format.data.lamp.data.col.col_g, this->EpIn.format.data.lamp.data.col.col_b);
 #else
                         sprintf(colhex, "#%02x%02x%02x", this->EpIn.format.data.lamp.data.col.col_r,
-                                this->EpIn.format.data.lamp.data.col.col_g, this->EpIn.format.data.lamp.data.col.col_b);
+                            this->EpIn.format.data.lamp.data.col.col_g, this->EpIn.format.data.lamp.data.col.col_b);
 #endif
                         value2[indexValue++] = colhex;
-                    } else {
+                    }
+                    else {
                         value2[indexValue++] = this->EpIn.format.data.lamp.data.col.col_r;
                         value2[indexValue++] = this->EpIn.format.data.lamp.data.col.col_g;
                         value2[indexValue++] = this->EpIn.format.data.lamp.data.col.col_b;
@@ -665,18 +688,21 @@ string O2Protocol::Lighting(const Json::Value &data) {
                     value2[indexValue++] = this->EpIn.format.data.lamp.lamp_cmd_len;
                     value["values"] = value2;
                     root["data"].append(value);
-                } else {
+                }
+                else {
                     break;
                 }
-            } else {
+            }
+            else {
                 break;
             }
         }
         if (led_number == 0) {
             root["status"] = -1;
-            root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
+            root["message"] = "什么都没读取到呢，可能是设备不支持或已断开连接";
         }
-    } else if (data["method"].asString() == "write") {
+    }
+    else if (data["method"].asString() == "write") {
         this->EpOut.format.id = 2;
         this->EpOut.format.cmd = 7;
         this->EpOut.format.data_len = 9;
@@ -691,14 +717,15 @@ string O2Protocol::Lighting(const Json::Value &data) {
                 this->EpOut.format.data.lamp.data.col.col_r = icol >> 16;
                 this->EpOut.format.data.lamp.data.col.col_g = icol >> 8;
                 this->EpOut.format.data.lamp.data.col.col_b = icol;
-            } else {
+            }
+            else {
                 this->EpOut.format.data.lamp.data.data[0] = data["data"][num]["values"][indexValue++].asInt();
                 this->EpOut.format.data.lamp.data.data[1] = data["data"][num]["values"][indexValue++].asInt();
                 this->EpOut.format.data.lamp.data.data[2] = data["data"][num]["values"][indexValue++].asInt();
 
             }
             this->EpOut.format.data.lamp.type =
-                    data["data"][num]["code"].asInt() | data["data"][num]["values"][indexValue++].asInt();
+                data["data"][num]["code"].asInt() | data["data"][num]["values"][indexValue++].asInt();
             this->EpOut.format.data.lamp.event = data["data"][num]["values"][indexValue++].asInt();
             this->EpOut.format.data.lamp.data.col.interval_time = data["data"][num]["values"][indexValue++].asInt();
             this->EpOut.format.data.lamp.lamp_cmd_len = data["data"][num]["values"][indexValue++].asInt();
@@ -716,10 +743,11 @@ string O2Protocol::Lighting(const Json::Value &data) {
                     value["number"] = this->EpIn.format.data.lamp.number;
                     if (rgb_format[this->EpIn.format.data.lamp.type & 0x3F]) {
                         sprintf_s(colhex, "#%02hhX%02hhX%02hhX", this->EpIn.format.data.lamp.data.col.col_r,
-                                  this->EpIn.format.data.lamp.data.col.col_g,
-                                  this->EpIn.format.data.lamp.data.col.col_b);
+                            this->EpIn.format.data.lamp.data.col.col_g,
+                            this->EpIn.format.data.lamp.data.col.col_b);
                         value2[indexValue++] = colhex;
-                    } else {
+                    }
+                    else {
                         value2[indexValue++] = this->EpIn.format.data.lamp.data.data[0];
                         value2[indexValue++] = this->EpIn.format.data.lamp.data.data[1];
                         value2[indexValue++] = this->EpIn.format.data.lamp.data.data[2];
@@ -730,21 +758,23 @@ string O2Protocol::Lighting(const Json::Value &data) {
                     value2[indexValue++] = this->EpIn.format.data.lamp.lamp_cmd_len;
                     value["values"] = value2;
                     root["data"].append(value);
-                } else {
+                }
+                else {
                     root["status"] = -1;
-                    root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
+                    root["message"] = "什么都没读取到呢，可能是设备不支持或已断开连接";
                     break;
                 }
             }
         }
-    } else {
+    }
+    else {
         root["status"] = -1;
-        root["message"] = u8"read还是write？";
+        root["message"] = "read还是write？";
     }
     return root.toStyledString();
 }
 
-string O2Protocol::LightingV2(const Json::Value &data) {
+string O2Protocol::LightingV2(const Json::Value& data) {
     std::unique_ptr<Json::StreamWriter> writer(Json::StreamWriterBuilder().newStreamWriter());
     Json::Value root, value, value2;
     char colhex[8];
@@ -771,10 +801,11 @@ string O2Protocol::LightingV2(const Json::Value &data) {
                     value["number"] = this->EpIn.format.data.lamp.number;
                     if (rgb_format[this->EpIn.format.data.lamp.type & 0x3F]) {
                         sprintf_s(colhex, "#%02x%02x%02x", this->EpIn.format.data.lamp.data.col.col_r,
-                                  this->EpIn.format.data.lamp.data.col.col_g,
-                                  this->EpIn.format.data.lamp.data.col.col_b);
+                            this->EpIn.format.data.lamp.data.col.col_g,
+                            this->EpIn.format.data.lamp.data.col.col_b);
                         value2[indexValue++] = colhex;
-                    } else {
+                    }
+                    else {
                         value2[indexValue++] = this->EpIn.format.data.lamp.data.col.col_r;
                         value2[indexValue++] = this->EpIn.format.data.lamp.data.col.col_g;
                         value2[indexValue++] = this->EpIn.format.data.lamp.data.col.col_b;
@@ -785,18 +816,21 @@ string O2Protocol::LightingV2(const Json::Value &data) {
                     value2[indexValue++] = this->EpIn.format.data.lamp.lamp_cmd_len;
                     value["values"] = value2;
                     root["data"].append(value);
-                } else {
+                }
+                else {
                     break;
                 }
-            } else {
+            }
+            else {
                 break;
             }
         }
         if (led_number == 0) {
             root["status"] = -1;
-            root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
+            root["message"] = "什么都没读取到呢，可能是设备不支持或已断开连接";
         }
-    } else if (data["method"].asString() == "write") {
+    }
+    else if (data["method"].asString() == "write") {
         this->EpOut.format.id = 2;
         this->EpOut.format.cmd = 7;
         this->EpOut.format.data_len = 9;
@@ -811,14 +845,15 @@ string O2Protocol::LightingV2(const Json::Value &data) {
                 this->EpOut.format.data.lamp.data.col.col_r = icol >> 16;
                 this->EpOut.format.data.lamp.data.col.col_g = icol >> 8;
                 this->EpOut.format.data.lamp.data.col.col_b = icol;
-            } else {
+            }
+            else {
                 this->EpOut.format.data.lamp.data.data[0] = data["data"][num]["values"][indexValue++].asInt();
                 this->EpOut.format.data.lamp.data.data[1] = data["data"][num]["values"][indexValue++].asInt();
                 this->EpOut.format.data.lamp.data.data[2] = data["data"][num]["values"][indexValue++].asInt();
 
             }
             this->EpOut.format.data.lamp.type =
-                    data["data"][num]["code"].asInt() | data["data"][num]["values"][indexValue++].asInt();
+                data["data"][num]["code"].asInt() | data["data"][num]["values"][indexValue++].asInt();
             this->EpOut.format.data.lamp.event = data["data"][num]["values"][indexValue++].asInt();
             this->EpOut.format.data.lamp.data.col.interval_time = data["data"][num]["values"][indexValue++].asInt();
             this->EpOut.format.data.lamp.lamp_cmd_len = data["data"][num]["values"][indexValue++].asInt();
@@ -836,10 +871,11 @@ string O2Protocol::LightingV2(const Json::Value &data) {
                     value["number"] = this->EpIn.format.data.lamp.number;
                     if (rgb_format[this->EpIn.format.data.lamp.type & 0x3F]) {
                         sprintf_s(colhex, "#%02hhX%02hhX%02hhX", this->EpIn.format.data.lamp.data.col.col_r,
-                                  this->EpIn.format.data.lamp.data.col.col_g,
-                                  this->EpIn.format.data.lamp.data.col.col_b);
+                            this->EpIn.format.data.lamp.data.col.col_g,
+                            this->EpIn.format.data.lamp.data.col.col_b);
                         value2[indexValue++] = colhex;
-                    } else {
+                    }
+                    else {
                         value2[indexValue++] = this->EpIn.format.data.lamp.data.data[0];
                         value2[indexValue++] = this->EpIn.format.data.lamp.data.data[1];
                         value2[indexValue++] = this->EpIn.format.data.lamp.data.data[2];
@@ -850,21 +886,23 @@ string O2Protocol::LightingV2(const Json::Value &data) {
                     value2[indexValue++] = this->EpIn.format.data.lamp.lamp_cmd_len;
                     value["values"] = value2;
                     root["data"].append(value);
-                } else {
+                }
+                else {
                     root["status"] = -1;
-                    root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
+                    root["message"] = "什么都没读取到呢，可能是设备不支持或已断开连接";
                     break;
                 }
             }
         }
-    } else {
+    }
+    else {
         root["status"] = -1;
-        root["message"] = u8"read还是write？";
+        root["message"] = "read还是write？";
     }
     return root.toStyledString();
 }
 
-string O2Protocol::Script(const Json::Value &data) {
+string O2Protocol::Script(const Json::Value& data) {
     unsigned char buf[2048];
     unsigned addr = 0;
     std::unique_ptr<Json::StreamWriter> writer(Json::StreamWriterBuilder().newStreamWriter());
@@ -887,22 +925,25 @@ string O2Protocol::Script(const Json::Value &data) {
             if (hid_read_timeout(this->handle, this->EpIn.udata, HID_DATA_LENGTH, 50) > 0) {
                 if (this->EpIn.format.cmd == 0) {
 #ifdef WIN32
-                    memcpy_s(&buf[addr],2048, this->EpIn.format.data.data, this->EpIn.format.data_len);
+                    memcpy_s(&buf[addr], 2048, this->EpIn.format.data.data, this->EpIn.format.data_len);
 #else
                     memcpy(&buf[addr], this->EpIn.format.data.data, this->EpIn.format.data_len);
 #endif
                     addr += this->EpIn.format.data_len;
-                } else {
+                }
+                else {
                     break;
                 }
-            } else {
+            }
+            else {
                 break;
             }
         }
         if (addr == 0) {
             root["status"] = -1;
-            root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
-        } else {
+            root["message"] = "什么都没读取到呢，可能是设备不支持或已断开连接";
+        }
+        else {
             int num = 0;
             int i = 0;
             for (i = 0; i < addr;) {
@@ -913,73 +954,73 @@ string O2Protocol::Script(const Json::Value &data) {
                 value["number"] = num;
                 i++;
                 switch (this->script[num].code) {
-                    case S_NOP: CV0;
-                        break;
-                    case S_JMP: CV2;
-                        break;
-                    case S_SJMP: CV1;
-                        break;
-                    case S_AJMP: CV1;
-                        break;
-                    case S_SLEEP_X256: CV1;
-                        break;
-                    case S_SLEEP: CV1;
-                        break;
-                    case S_SLEEP_RAND_X256: CV1;
-                        break;
-                    case S_SLEEP_RAND: CV1;
-                        break;
-                    case S_SLEEP_X256_VAL: CV1;
-                        break;
-                    case S_SLEEP_VAL: CV1;
-                        break;
-                    case S_SLEEP_RAND_X8_VAL: CV1;
-                        break;
-                    case S_SLEEP_RAND_VAL: CV1;
-                        break;
+                case S_NOP: CV0;
+                    break;
+                case S_JMP: CV2;
+                    break;
+                case S_SJMP: CV1;
+                    break;
+                case S_AJMP: CV1;
+                    break;
+                case S_SLEEP_X256: CV1;
+                    break;
+                case S_SLEEP: CV1;
+                    break;
+                case S_SLEEP_RAND_X256: CV1;
+                    break;
+                case S_SLEEP_RAND: CV1;
+                    break;
+                case S_SLEEP_X256_VAL: CV1;
+                    break;
+                case S_SLEEP_VAL: CV1;
+                    break;
+                case S_SLEEP_RAND_X8_VAL: CV1;
+                    break;
+                case S_SLEEP_RAND_VAL: CV1;
+                    break;
 
-                    case S_SK:
-                    case S_GK:
-                    case S_MK:
-                    case S_MU:
-                    case S_SK_VAL:
-                    case S_GK_VAL:
-                    case S_MK_VAL:
-                    case S_MU_VAL:
-                    case S_USK:
-                    case S_UGK:
-                    case S_UMK:
-                    case S_UMU:
-                    case S_USK_VAL:
-                    case S_UGK_VAL:
-                    case S_UMK_VAL:
-                    case S_UMU_VAL: CV1;
-                        break;
+                case S_SK:
+                case S_GK:
+                case S_MK:
+                case S_MU:
+                case S_SK_VAL:
+                case S_GK_VAL:
+                case S_MK_VAL:
+                case S_MU_VAL:
+                case S_USK:
+                case S_UGK:
+                case S_UMK:
+                case S_UMU:
+                case S_USK_VAL:
+                case S_UGK_VAL:
+                case S_UMK_VAL:
+                case S_UMU_VAL: CV1;
+                    break;
 
 
-                    case S_DJNZ_VAL: CV3;
-                        break;
+                case S_DJNZ_VAL: CV3;
+                    break;
 
-                    case S_UPDATE: CV0;
-                        break;
+                case S_UPDATE: CV0;
+                    break;
 
-                    case S_WHILE_UP: CV0;
-                        break;
-                    case S_WHILE_DOWN: CV0;
-                        break;
-                    case S_IF_UP_EXIT: CV0;
-                        break;
-                    case S_IF_DOWN_EXIT: CV0;
-                        break;
-                    case S_IF_KA_EXIT: CV0;
-                        break;
+                case S_WHILE_UP: CV0;
+                    break;
+                case S_WHILE_DOWN: CV0;
+                    break;
+                case S_IF_UP_EXIT: CV0;
+                    break;
+                case S_IF_DOWN_EXIT: CV0;
+                    break;
+                case S_IF_KA_EXIT: CV0;
+                    break;
 
-                    case S_RES: CV0;
-                        break;
-                    case S_EXIT: CV0;
-                        break;
-                    default: CV0;
-                        break;
+                case S_RES: CV0;
+                    break;
+                case S_EXIT: CV0;
+                    break;
+                default: CV0;
+                    break;
                 }
                 value2[0] = this->script[num].value[0];
                 value2[1] = this->script[num].value[1];
@@ -1000,7 +1041,8 @@ string O2Protocol::Script(const Json::Value &data) {
                 root["data"].append(value);
             }
         }
-    } else if (data["method"].asString() == "write") {
+    }
+    else if (data["method"].asString() == "write") {
         unsigned num = data["data"][0]["number"].asInt();;
         unsigned i = 0;
 
@@ -1015,73 +1057,73 @@ string O2Protocol::Script(const Json::Value &data) {
             buf[i] = this->script[step].code;
             i++;
             switch (this->script[step].code) {
-                case S_NOP: WCV0;
-                    break;
-                case S_JMP: WCV2;
-                    break;
-                case S_SJMP: WCV1;
-                    break;
-                case S_AJMP: WCV1;
-                    break;
-                case S_SLEEP_X256: WCV1;
-                    break;
-                case S_SLEEP: WCV1;
-                    break;
-                case S_SLEEP_RAND_X256: WCV1;
-                    break;
-                case S_SLEEP_RAND: WCV1;
-                    break;
-                case S_SLEEP_X256_VAL: WCV1;
-                    break;
-                case S_SLEEP_VAL: WCV1;
-                    break;
-                case S_SLEEP_RAND_X8_VAL: WCV1;
-                    break;
-                case S_SLEEP_RAND_VAL: WCV1;
-                    break;
+            case S_NOP: WCV0;
+                break;
+            case S_JMP: WCV2;
+                break;
+            case S_SJMP: WCV1;
+                break;
+            case S_AJMP: WCV1;
+                break;
+            case S_SLEEP_X256: WCV1;
+                break;
+            case S_SLEEP: WCV1;
+                break;
+            case S_SLEEP_RAND_X256: WCV1;
+                break;
+            case S_SLEEP_RAND: WCV1;
+                break;
+            case S_SLEEP_X256_VAL: WCV1;
+                break;
+            case S_SLEEP_VAL: WCV1;
+                break;
+            case S_SLEEP_RAND_X8_VAL: WCV1;
+                break;
+            case S_SLEEP_RAND_VAL: WCV1;
+                break;
 
-                case S_SK:
-                case S_GK:
-                case S_MK:
-                case S_MU:
-                case S_SK_VAL:
-                case S_GK_VAL:
-                case S_MK_VAL:
-                case S_MU_VAL:
-                case S_USK:
-                case S_UGK:
-                case S_UMK:
-                case S_UMU:
-                case S_USK_VAL:
-                case S_UGK_VAL:
-                case S_UMK_VAL:
-                case S_UMU_VAL: WCV1;
-                    break;
+            case S_SK:
+            case S_GK:
+            case S_MK:
+            case S_MU:
+            case S_SK_VAL:
+            case S_GK_VAL:
+            case S_MK_VAL:
+            case S_MU_VAL:
+            case S_USK:
+            case S_UGK:
+            case S_UMK:
+            case S_UMU:
+            case S_USK_VAL:
+            case S_UGK_VAL:
+            case S_UMK_VAL:
+            case S_UMU_VAL: WCV1;
+                break;
 
 
-                case S_DJNZ_VAL: WCV3;
-                    break;
+            case S_DJNZ_VAL: WCV3;
+                break;
 
-                case S_UPDATE: WCV0;
-                    break;
+            case S_UPDATE: WCV0;
+                break;
 
-                case S_WHILE_UP: WCV0;
-                    break;
-                case S_WHILE_DOWN: WCV0;
-                    break;
-                case S_IF_UP_EXIT: WCV0;
-                    break;
-                case S_IF_DOWN_EXIT: WCV0;
-                    break;
-                case S_IF_KA_EXIT: WCV0;
-                    break;
+            case S_WHILE_UP: WCV0;
+                break;
+            case S_WHILE_DOWN: WCV0;
+                break;
+            case S_IF_UP_EXIT: WCV0;
+                break;
+            case S_IF_DOWN_EXIT: WCV0;
+                break;
+            case S_IF_KA_EXIT: WCV0;
+                break;
 
-                case S_RES: WCV0;
-                    break;
-                case S_EXIT: WCV0;
-                    break;
-                default: WCV0;
-                    break;
+            case S_RES: WCV0;
+                break;
+            case S_EXIT: WCV0;
+                break;
+            default: WCV0;
+                break;
             }
         }
         buf[i++] = 0xff;
@@ -1112,11 +1154,13 @@ string O2Protocol::Script(const Json::Value &data) {
                 this->EpIn.format.cmd;
                 if (this->EpIn.format.cmd == 0) {
 
-                } else {
+                }
+                else {
                     i = 0;
                     break;
                 }
-            } else {
+            }
+            else {
                 printf_s("%ws\n", hid_error(this->handle));
                 cout << err << " time_out" << endl;
                 i = 0;
@@ -1125,18 +1169,20 @@ string O2Protocol::Script(const Json::Value &data) {
         }
         if (i < addr) {
             root["status"] = -1;
-            root["message"] = u8"写入失败！可能是长度过长，精简一点吧！";
-        } else {
+            root["message"] = "写入失败！可能是长度过长，精简一点吧！";
+        }
+        else {
             root["status"] = 0;
         }
-    } else {
+    }
+    else {
         root["status"] = -1;
-        root["message"] = u8"read还是write？";
+        root["message"] = "read还是write？";
     }
     return root.toStyledString();
 }
 
-string O2Protocol::Dev_id(const Json::Value &data) {
+string O2Protocol::Dev_id(const Json::Value& data) {
     std::unique_ptr<Json::StreamWriter> writer(Json::StreamWriterBuilder().newStreamWriter());
     Json::Value root, value, value2;
     root.clear();
@@ -1155,17 +1201,18 @@ string O2Protocol::Dev_id(const Json::Value &data) {
             if (this->EpIn.format.cmd == 0) {
                 value["code"] = 0;
                 value["number"] = 0;
-                value2[0] = (int) this->EpIn.format.data.udata[0] + (int) this->EpIn.format.data.udata[1] * 256;
-                value2[1] = (int) this->EpIn.format.data.udata[2] + (int) this->EpIn.format.data.udata[3] * 256;
+                value2[0] = (int)this->EpIn.format.data.udata[0] + (int)this->EpIn.format.data.udata[1] * 256;
+                value2[1] = (int)this->EpIn.format.data.udata[2] + (int)this->EpIn.format.data.udata[3] * 256;
                 value["values"] = value2;
                 root["data"].append(value);
             }
         }
         if (root["data"].size() < 1) {
             root["status"] = -1;
-            root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
+            root["message"] = "什么都没读取到呢，可能是设备不支持或已断开连接";
         }
-    } else if (data["method"].asString() == "write") {
+    }
+    else if (data["method"].asString() == "write") {
         this->EpOut.format.id = 2;
         this->EpOut.format.cmd = 0xfe;
         this->EpOut.format.data_len = 4;
@@ -1190,16 +1237,17 @@ string O2Protocol::Dev_id(const Json::Value &data) {
         }
         if (root["data"].size() < 1) {
             root["status"] = -1;
-            root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
+            root["message"] = "什么都没读取到呢，可能是设备不支持或已断开连接";
         }
-    } else {
+    }
+    else {
         root["status"] = -1;
-        root["message"] = u8"read还是write？";
+        root["message"] = "read还是write？";
     }
     return root.toStyledString();
 }
 
-string O2Protocol::Dev_name(const Json::Value &data) {
+string O2Protocol::Dev_name(const Json::Value& data) {
     std::unique_ptr<Json::StreamWriter> writer(Json::StreamWriterBuilder().newStreamWriter());
     Json::Value root, value, value2;
     root.clear();
@@ -1221,15 +1269,17 @@ string O2Protocol::Dev_name(const Json::Value &data) {
                 value["code"] = 0;
                 value["number"] = 0;
                 this->EpIn.format.data.data[this->EpIn.format.data_len] = 0;
-                value2[0] = unicodeToUTF8((wchar_t *) this->EpIn.format.data.data).data();
+                value2[0] = unicodeToUTF8((wchar_t*)this->EpIn.format.data.data).data();
                 value["values"] = value2;
                 root["data"].append(value);
-            } else {
+            }
+            else {
                 root["status"] = -1;
-                root["message"] = u8"设备不支持改名操作";
+                root["message"] = "设备不支持改名操作";
             }
         }
-    } else if (data["method"].asString() == "write" && data["data"][0]["values"][0].isString()) {
+    }
+    else if (data["method"].asString() == "write" && data["data"][0]["values"][0].isString()) {
         memset(this->EpOut.udata, 0, 64);
         int old = 0;
         this->EpOut.format.id = 2;
@@ -1253,19 +1303,20 @@ string O2Protocol::Dev_name(const Json::Value &data) {
                 value["code"] = 0;
                 value["number"] = 0;
                 this->EpIn.format.data.data[this->EpIn.format.data_len] = 0;
-                value2[0] = unicodeToUTF8((wchar_t *) this->EpIn.format.data.data).data();
+                value2[0] = unicodeToUTF8((wchar_t*)this->EpIn.format.data.data).data();
                 value["values"] = value2;
                 root["data"].append(value);
             }
         }
-    } else {
+    }
+    else {
         root["status"] = -1;
-        root["message"] = u8"read还是write？或者是数据格式错误？";
+        root["message"] = "read还是write？或者是数据格式错误？";
     }
     return root.toStyledString();
 }
 
-string O2Protocol::Ok_pwd(const Json::Value &data) {
+string O2Protocol::Ok_pwd(const Json::Value& data) {
     std::unique_ptr<Json::StreamWriter> writer(Json::StreamWriterBuilder().newStreamWriter());
     Json::Value root, value, value2;
     root.clear();
@@ -1291,13 +1342,15 @@ string O2Protocol::Ok_pwd(const Json::Value &data) {
                     value2[0] = this->EpIn.format.data.ok_pwd.pwd;
                     value["values"] = value2;
                     root["data"].append(value);
-                } else {
+                }
+                else {
                     if (i == 0) {
                         old = 1;
                     }
                     break;
                 }
-            } else {
+            }
+            else {
                 old = 1;
                 break;
             }
@@ -1320,16 +1373,19 @@ string O2Protocol::Ok_pwd(const Json::Value &data) {
                     value2[0] = this->EpIn.format.data.data;
                     value["values"] = value2;
                     root["data"].append(value);
-                } else {
-                    root["status"] = -1;
-                    root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
                 }
-            } else {
+                else {
+                    root["status"] = -1;
+                    root["message"] = "什么都没读取到呢，可能是设备不支持或已断开连接";
+                }
+            }
+            else {
                 root["status"] = -1;
-                root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
+                root["message"] = "什么都没读取到呢，可能是设备不支持或已断开连接";
             }
         }
-    } else if (data["method"].asString() == "write" && data["data"][0]["values"][0].isString()) {
+    }
+    else if (data["method"].asString() == "write" && data["data"][0]["values"][0].isString()) {
         int old = 0;
         this->EpOut.format.id = 2;
         this->EpOut.format.cmd = 0x0B;
@@ -1350,11 +1406,13 @@ string O2Protocol::Ok_pwd(const Json::Value &data) {
                     value2[0] = this->EpIn.format.data.ok_pwd.pwd;
                     value["values"] = value2;
                     root["data"].append(value);
-                } else {
+                }
+                else {
                     old = 1;
                     break;
                 }
-            } else {
+            }
+            else {
                 old = 1;
                 break;
             }
@@ -1379,23 +1437,26 @@ string O2Protocol::Ok_pwd(const Json::Value &data) {
                     value2[0] = this->EpIn.format.data.data;
                     value["values"] = value2;
                     root["data"].append(value);
-                } else {
-                    root["status"] = -1;
-                    root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
                 }
-            } else {
+                else {
+                    root["status"] = -1;
+                    root["message"] = "什么都没读取到呢，可能是设备不支持或已断开连接";
+                }
+            }
+            else {
                 root["status"] = -1;
-                root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
+                root["message"] = "什么都没读取到呢，可能是设备不支持或已断开连接";
             }
         }
-    } else {
+    }
+    else {
         root["status"] = -1;
-        root["message"] = u8"read还是write？或者是数据格式错误？";
+        root["message"] = "read还是write？或者是数据格式错误？";
     }
     return root.toStyledString();
 }
 
-string O2Protocol::Script_sw(const Json::Value &data) {
+string O2Protocol::Script_sw(const Json::Value& data) {
     std::unique_ptr<Json::StreamWriter> writer(Json::StreamWriterBuilder().newStreamWriter());
     Json::Value root, value, value2;
     root.clear();
@@ -1422,18 +1483,21 @@ string O2Protocol::Script_sw(const Json::Value &data) {
                     value2[0] = this->EpIn.format.data.script_sw.name;
                     value["values"] = value2;
                     root["data"].append(value);
-                } else {
+                }
+                else {
                     break;
                 }
-            } else {
+            }
+            else {
                 break;
             }
         }
         if (script_number == 0) {
             root["status"] = -1;
-            root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
+            root["message"] = "什么都没读取到呢，可能是设备不支持或已断开连接";
         }
-    } else if (data["method"].asString() == "write") {
+    }
+    else if (data["method"].asString() == "write") {
         this->EpOut.format.id = 2;
         this->EpOut.format.cmd = 0xf1;
         this->EpOut.format.data_len = 34;
@@ -1457,16 +1521,18 @@ string O2Protocol::Script_sw(const Json::Value &data) {
                     value2[0] = this->EpIn.format.data.script_sw.name;
                     value["values"] = value2;
                     root["data"].append(value);
-                } else {
+                }
+                else {
                     root["status"] = -1;
-                    root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
+                    root["message"] = "什么都没读取到呢，可能是设备不支持或已断开连接";
                     break;
                 }
             }
         }
-    } else {
+    }
+    else {
         root["status"] = -1;
-        root["message"] = u8"read还是write？";
+        root["message"] = "read还是write？";
     }
     return root.toStyledString();
 }

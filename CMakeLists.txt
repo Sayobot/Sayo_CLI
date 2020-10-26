@@ -17,7 +17,6 @@ else ()
     message(ERROR "unknown platform: ${CMAKE_SYSTEM_NAME}, you need set platform in CMakeList.txt manually.")
 endif ()
 
-
 set(JsonCpp_INCLUDE_DIR "extern/JsonCpp/include")
 set(HIDAPI_INCLUDE_DIR "extern/HIDAPI/hidapi")
 
@@ -40,8 +39,9 @@ AUX_SOURCE_DIRECTORY(
         ${HIDAPI_SRC_DIR}
         HIDAPI_SRCS)
 
-
-SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pthread ")
+if (NOT CMAKE_SYSTEM_NAME MATCHES "Windows")
+    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pthread ")
+endif ()
 
 ADD_EXECUTABLE(sayo_cli main.cpp o2_protocol.cpp ${DIR_SRCS} ${JsonCpp_SRCS} ${HIDAPI_SRCS})
 

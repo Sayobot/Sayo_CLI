@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <stdio.h>
 //#include <Windows.h>
@@ -9,7 +9,8 @@ using std::string;
 
 #define HTTP_BUF_SIZE 20480
 
-enum REQUEST_CODE {
+enum REQUEST_CODE
+{
     REQ_ERROR = 0,
     REQ_GET,
     REQ_HEAD,
@@ -21,8 +22,8 @@ enum REQUEST_CODE {
     REQ_TRACE
 };
 
-
-struct REQUEST {
+struct REQUEST
+{
     char type = 0;
     char accept_time[32];
     char connection = 0;

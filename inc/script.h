@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #define S_NOP 1
 #define S_JMP 2
@@ -32,7 +32,6 @@
 #define S_UGK_VAL 0X1D
 #define S_UMK_VAL 0X1E
 #define S_UMU_VAL 0x1F
-
 
 #define S_UPDATE 0x20
 
@@ -77,73 +76,74 @@
 #define S_DATA_DPTR 9
 #define S_DATA_IO 10
 
+#define CV0 \
+    {       \
+    }
+#define CV1                                  \
+    {                                        \
+        this->script[num].value[0] = buf[i]; \
+        i++;                                 \
+    }
+#define CV2                                  \
+    {                                        \
+        this->script[num].value[0] = buf[i]; \
+        i++;                                 \
+        this->script[num].value[1] = buf[i]; \
+        i++;                                 \
+    }
+#define CV3                                  \
+    {                                        \
+        this->script[num].value[0] = buf[i]; \
+        i++;                                 \
+        this->script[num].value[1] = buf[i]; \
+        i++;                                 \
+        this->script[num].value[2] = buf[i]; \
+        i++;                                 \
+    }
+#define CV4                                  \
+    {                                        \
+        this->script[num].value[0] = buf[i]; \
+        i++;                                 \
+        this->script[num].value[1] = buf[i]; \
+        i++;                                 \
+        this->script[num].value[2] = buf[i]; \
+        i++;                                 \
+        this->script[num].value[3] = buf[i]; \
+        i++;                                 \
+    }
 
-#define CV0                                                                                                            \
-    {}
-#define CV1                                                                                                            \
-    {                                                                                                                  \
-        this->script[num].value[0] = buf[i];                                                                           \
-        i++;                                                                                                           \
+#define WCV0 \
+    {        \
     }
-#define CV2                                                                                                            \
-    {                                                                                                                  \
-        this->script[num].value[0] = buf[i];                                                                           \
-        i++;                                                                                                           \
-        this->script[num].value[1] = buf[i];                                                                           \
-        i++;                                                                                                           \
+#define WCV1                                  \
+    {                                         \
+        buf[i] = this->script[step].value[0]; \
+        i++;                                  \
     }
-#define CV3                                                                                                            \
-    {                                                                                                                  \
-        this->script[num].value[0] = buf[i];                                                                           \
-        i++;                                                                                                           \
-        this->script[num].value[1] = buf[i];                                                                           \
-        i++;                                                                                                           \
-        this->script[num].value[2] = buf[i];                                                                           \
-        i++;                                                                                                           \
+#define WCV2                                  \
+    {                                         \
+        buf[i] = this->script[step].value[0]; \
+        i++;                                  \
+        buf[i] = this->script[step].value[1]; \
+        i++;                                  \
     }
-#define CV4                                                                                                            \
-    {                                                                                                                  \
-        this->script[num].value[0] = buf[i];                                                                           \
-        i++;                                                                                                           \
-        this->script[num].value[1] = buf[i];                                                                           \
-        i++;                                                                                                           \
-        this->script[num].value[2] = buf[i];                                                                           \
-        i++;                                                                                                           \
-        this->script[num].value[3] = buf[i];                                                                           \
-        i++;                                                                                                           \
+#define WCV3                                  \
+    {                                         \
+        buf[i] = this->script[step].value[0]; \
+        i++;                                  \
+        buf[i] = this->script[step].value[1]; \
+        i++;                                  \
+        buf[i] = this->script[step].value[2]; \
+        i++;                                  \
     }
-
-#define WCV0                                                                                                           \
-    {}
-#define WCV1                                                                                                           \
-    {                                                                                                                  \
-        buf[i] = this->script[step].value[0];                                                                          \
-        i++;                                                                                                           \
-    }
-#define WCV2                                                                                                           \
-    {                                                                                                                  \
-        buf[i] = this->script[step].value[0];                                                                          \
-        i++;                                                                                                           \
-        buf[i] = this->script[step].value[1];                                                                          \
-        i++;                                                                                                           \
-    }
-#define WCV3                                                                                                           \
-    {                                                                                                                  \
-        buf[i] = this->script[step].value[0];                                                                          \
-        i++;                                                                                                           \
-        buf[i] = this->script[step].value[1];                                                                          \
-        i++;                                                                                                           \
-        buf[i] = this->script[step].value[2];                                                                          \
-        i++;                                                                                                           \
-    }
-#define WCV4                                                                                                           \
-    {                                                                                                                  \
-        buf[i] = this->script[step].value[0];                                                                          \
-        i++;                                                                                                           \
-        buf[i] = this->script[step].value[1];                                                                          \
-        i++;                                                                                                           \
-        buf[i] = this->script[step].value[2];                                                                          \
-        i++;                                                                                                           \
-        buf[i] = this->script[step].value[3];                                                                          \
-        i++;                                                                                                           \
+#define WCV4                                  \
+    {                                         \
+        buf[i] = this->script[step].value[0]; \
+        i++;                                  \
+        buf[i] = this->script[step].value[1]; \
+        i++;                                  \
+        buf[i] = this->script[step].value[2]; \
+        i++;                                  \
+        buf[i] = this->script[step].value[3]; \
+        i++;                                  \
     }

@@ -1,5 +1,4 @@
-#pragma once
-
+﻿#pragma once
 
 #include <cstring> // for strcat()
 #include <fstream>
@@ -34,7 +33,6 @@
 #define DWORD (unsigned long int)
 #endif
 
-
 using std::bad_alloc;
 using std::cout;
 using std::endl;
@@ -49,11 +47,9 @@ using std::wcout;
 using std::wifstream;
 using std::wstring;
 
-
 void unicodeToUTF8(const wstring &src, string &result);
 
 string unicodeToUTF8(const wstring &src);
-
 
 std::string UnicodeToUTF8(const std::wstring &wstr);
 
@@ -80,7 +76,6 @@ std::string ws2s(const std::wstring &ws);
 std::wstring s2ws(const std::string &s);
 
 unsigned long getCRC(const char *buf, int nLength = 0);
-
 
 unsigned int unicodestrtoul(char *str, int radix, int maxCount = 4);
 
