@@ -165,7 +165,7 @@ string O2Protocol::SearchDrivers(unsigned short vid, unsigned short pid)
 	hid_free_enumeration(cur_dev);
 	root["status"] = devn ?0:-1;
 	if (devn == 0)
-		root["message"] = u8"δ�ҵ��豸�������Ƿ���˻����ѱ����ӣ�";
+		root["message"] = u8"未找到设备，请检查是否插了或者已被连接？";
 	root["devices"] = devn;
 	return root.toStyledString();
 }
@@ -185,7 +185,7 @@ string O2Protocol::Connect(string p,int session)
 	}
 	else
 	{
-		root["message"] = u8"���豸ʧ���ˣ�����������������һ�����ԣ�";
+		root["message"] = u8"打开设备失败了，你插好了吗？重新搜索一下试试？";
 		root["status"] = -1;
 	}
 
@@ -224,18 +224,18 @@ string O2Protocol::Save()
 		{
 			root["error_code"] = this->EpIn.format.cmd;
 			root["status"] = -1;
-			root["message"] = u8"����ʧ���ˣ�������Ҫ��Ҫ����һ�Σ�";
+			root["message"] = u8"保存失败了，，，，要不要再试一次？";
 		}
 		else
 		{
 			root["status"] = 0;
-			root["message"] = u8"��ϲ������ɹ��ˣ�";
+			root["message"] = u8"恭喜！保存成功了！";
 		}
 	}
 	else
 	{
 		root["status"] = -1;
-		root["message"] = u8"��Ӧ��ʱ���������豸�ѶϿ�";
+		root["message"] = u8"响应超时……可能设备已断开";
 	}
 	return root.toStyledString();
 }
@@ -306,7 +306,7 @@ string O2Protocol::Buttons(const Json::Value& data)
 		if (key_number == 0)
 		{
 			root["status"] = -1;
-			root["message"] = u8"ʲô��û��ȡ���أ��������豸��֧�ֻ��ѶϿ�����";
+			root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
 		}
 	}
 	else if (data["method"].asString() == "write")
@@ -344,7 +344,7 @@ string O2Protocol::Buttons(const Json::Value& data)
 				else
 				{
 					root["status"] = -1;
-					root["message"] = u8"ʲô��û��ȡ���أ��������豸��֧�ֻ��ѶϿ�����";
+					root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
 					break;
 				}
 			}
@@ -353,7 +353,7 @@ string O2Protocol::Buttons(const Json::Value& data)
 	else
 	{
 		root["status"] = -1;
-		root["message"] = u8"read����write��";
+		root["message"] = u8"read还是write？";
 	}
 	return root.toStyledString();
 }
@@ -406,7 +406,7 @@ string O2Protocol::Api(const Json::Value& data)
 		if (number == 0)
 		{
 			root["status"] = -1;
-			root["message"] = u8"ʲô��û��ȡ���أ��������豸��֧�ֻ��ѶϿ�����";
+			root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
 		}
 	}
 	else if (data["method"].asString() == "write")
@@ -448,7 +448,7 @@ string O2Protocol::Api(const Json::Value& data)
 				else
 				{
 					root["status"] = -1;
-					root["message"] = u8"ʲô��û��ȡ���أ��������豸��֧�ֻ��ѶϿ�����";
+					root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
 					break;
 				}
 			}
@@ -457,7 +457,7 @@ string O2Protocol::Api(const Json::Value& data)
 	else
 	{
 		root["status"] = -1;
-		root["message"] = u8"read����write��";
+		root["message"] = u8"read还是write？";
 	}
 	return root.toStyledString();
 }
@@ -502,7 +502,7 @@ string O2Protocol::Bootloader(const Json::Value& data)
 			else
 			{
 				root["status"] = -1;
-				root["message"] = "��֧�ֵ�ָ��";
+				root["message"] = "不支持的指令";
 			}
 		}
 	return root.toStyledString();
@@ -770,7 +770,7 @@ string O2Protocol::Lighting(const Json::Value& data)
 		if (led_number == 0)
 		{
 			root["status"] = -1;
-			root["message"] = u8"ʲô��û��ȡ���أ��������豸��֧�ֻ��ѶϿ�����";
+					root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
 		}
 	}
 	else if (data["method"].asString() == "write")
@@ -839,7 +839,7 @@ string O2Protocol::Lighting(const Json::Value& data)
 				else
 				{
 					root["status"] = -1;
-					root["message"] = u8"ʲô��û��ȡ���أ��������豸��֧�ֻ��ѶϿ�����";
+					root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
 					break;
 				}
 			}
@@ -848,7 +848,7 @@ string O2Protocol::Lighting(const Json::Value& data)
 	else
 	{
 		root["status"] = -1;
-		root["message"] = u8"read����write��";
+		root["message"] = u8"read还是write？";
 	}
 	return root.toStyledString();
 }
@@ -914,7 +914,7 @@ string O2Protocol::LightingV2(const Json::Value& data)
 		if (led_number == 0)
 		{
 			root["status"] = -1;
-			root["message"] = u8"ʲô��û��ȡ���أ��������豸��֧�ֻ��ѶϿ�����";
+			root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
 		}
 	}
 	else if (data["method"].asString() == "write")
@@ -983,7 +983,7 @@ string O2Protocol::LightingV2(const Json::Value& data)
 				else
 				{
 					root["status"] = -1;
-					root["message"] = u8"ʲô��û��ȡ���أ��������豸��֧�ֻ��ѶϿ�����";
+					root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
 					break;
 				}
 			}
@@ -992,7 +992,7 @@ string O2Protocol::LightingV2(const Json::Value& data)
 	else
 	{
 		root["status"] = -1;
-		root["message"] = u8"read����write��";
+		root["message"] = u8"read还是write？";
 	}
 	return root.toStyledString();
 }
@@ -1044,7 +1044,7 @@ string O2Protocol::Script(const Json::Value& data)
 		if (addr == 0)
 		{
 			root["status"] = -1;
-			root["message"] = u8"ʲô��û��ȡ���أ��������豸��֧�ֻ��ѶϿ�����";
+			root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
 		}
 		else
 		{
@@ -1333,7 +1333,7 @@ string O2Protocol::Script(const Json::Value& data)
 		if (i < addr)
 		{
 			root["status"] = -1;
-			root["message"] = u8"д��ʧ�ܣ������ǳ��ȹ���������һ��ɣ�";
+			root["message"] = u8"写入失败！可能是长度过长，精简一点吧！";
 		}
 		else
 		{
@@ -1343,7 +1343,7 @@ string O2Protocol::Script(const Json::Value& data)
 	else
 	{
 		root["status"] = -1;
-		root["message"] = u8"read����write��";
+		root["message"] = u8"read还是write？";
 	}
 	return root.toStyledString();
 }
@@ -1380,7 +1380,7 @@ string O2Protocol::Dev_id(const Json::Value& data)
 		if (root["data"].size() < 1)
 		{
 			root["status"] = -1;
-			root["message"] = u8"ʲô��û��ȡ���أ��������豸��֧�ֻ��ѶϿ�����";
+			root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
 		}
 	}
 	else if (data["method"].asString() == "write")
@@ -1412,13 +1412,13 @@ string O2Protocol::Dev_id(const Json::Value& data)
 		if (root["data"].size() < 1)
 		{
 			root["status"] = -1;
-			root["message"] = u8"ʲô��û��ȡ���أ��������豸��֧�ֻ��ѶϿ�����";
+			root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
 		}
 	}
 	else
 	{
 		root["status"] = -1;
-		root["message"] = u8"read����write��";
+		root["message"] = u8"read还是write？";
 	}
 	return root.toStyledString();
 }
@@ -1456,7 +1456,7 @@ string O2Protocol::Dev_name(const Json::Value& data)
 			else
 			{
 				root["status"] = -1;
-				root["message"] = u8"�豸��֧�ָ�������";
+				root["message"] = u8"设备不支持改名操作";
 			}
 		}
 	}
@@ -1497,7 +1497,7 @@ string O2Protocol::Dev_name(const Json::Value& data)
 	else
 	{
 		root["status"] = -1;
-		root["message"] = u8"read����write�����������ݸ�ʽ����";
+		root["message"] = u8"read还是write？或者是数据格式错误？";
 	}
 	return root.toStyledString();
 }
@@ -1574,13 +1574,13 @@ string O2Protocol::Ok_pwd(const Json::Value& data)
 				else
 				{
 					root["status"] = -1;
-					root["message"] = u8"ʲô��û��ȡ���أ��������豸��֧�ֻ��ѶϿ�����";
+					root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
 				}
 			}
 			else
 			{
 				root["status"] = -1;
-				root["message"] = u8"ʲô��û��ȡ���أ��������豸��֧�ֻ��ѶϿ�����";
+				root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
 			}
 		}
 	}
@@ -1649,20 +1649,20 @@ string O2Protocol::Ok_pwd(const Json::Value& data)
 				else
 				{
 					root["status"] = -1;
-					root["message"] = u8"ʲô��û��ȡ���أ��������豸��֧�ֻ��ѶϿ�����";
+					root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
 				}
 			}
 			else
 			{
 				root["status"] = -1;
-				root["message"] = u8"ʲô��û��ȡ���أ��������豸��֧�ֻ��ѶϿ�����";
+				root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
 			}
 		}
 	}
 	else
 	{
 		root["status"] = -1;
-		root["message"] = u8"read����write�����������ݸ�ʽ����";
+		root["message"] = u8"read还是write？或者是数据格式错误？";
 	}
 	return root.toStyledString();
 }
@@ -1713,7 +1713,7 @@ string O2Protocol::Script_sw(const Json::Value& data)
 		if (script_number == 0)
 		{
 			root["status"] = -1;
-			root["message"] = u8"ʲô��û��ȡ���أ��������豸��֧�ֻ��ѶϿ�����";
+			root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
 		}
 	}
 	else if (data["method"].asString() == "write")
@@ -1748,7 +1748,7 @@ string O2Protocol::Script_sw(const Json::Value& data)
 				else
 				{
 					root["status"] = -1;
-					root["message"] = u8"ʲô��û��ȡ���أ��������豸��֧�ֻ��ѶϿ�����";
+					root["message"] = u8"什么都没读取到呢，可能是设备不支持或已断开连接";
 					break;
 				}
 			}
@@ -1757,7 +1757,7 @@ string O2Protocol::Script_sw(const Json::Value& data)
 	else
 	{
 		root["status"] = -1;
-		root["message"] = u8"read����write��";
+		root["message"] = u8"read还是write？";
 	}
 	return root.toStyledString();
 }
