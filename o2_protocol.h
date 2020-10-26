@@ -4,13 +4,17 @@
 #ifdef _WIN32
 #include <windows.h>
 #else
+
 #include <unistd.h>
+
 #endif
+
 #include "tools.h"
 
 
 #include "hidapi.h"
 #include <json/json.h>
+
 #ifdef WIN32
 #pragma comment(lib, "./hidapi-master/windows/Release/hidapi.lib")
 #endif
@@ -144,26 +148,41 @@ struct SCRIPT_TMP {
 };
 
 class O2Protocol {
-  public:
+public:
     char *path;
     int connected = 0;
+
     string SearchDrivers(unsigned short vid = 0x8089, unsigned short pid = 0x0);
+
     string Connect(string path, int session);
+
     string Disconnect();
+
     string Save();
+
     int Check();
+
     string Buttons(const Json::Value &data);
+
     string Lighting(const Json::Value &data);
+
     string LightingV2(const Json::Value &data);
+
     string Script(const Json::Value &data);
+
     string Script_sw(const Json::Value &data);
+
     string Dev_id(const Json::Value &data);
+
     string Dev_name(const Json::Value &data);
+
     string Ok_pwd(const Json::Value &data);
+
     string Api(const Json::Value &data);
+
     string Bootloader(const Json::Value &data);
     // string Firmware_write(const Json::Value& data);
-  private:
+private:
     bool bootloaderMode = 0;
     hid_device *handle;
     o2_hid_data EpIn;

@@ -8,6 +8,7 @@
 #include "o2_protocol.h"
 #include <cstdio>
 #include <json/json.h>
+
 #ifndef WIN32
 
 #endif
@@ -351,13 +352,14 @@ connection: close\r\n\
                 if (_read) {
                     do {
                         _read.read(recvbuffer, req.response_content_length > HTTP_BUF_SIZE
-                                                   ? HTTP_BUF_SIZE
-                                                   : req.response_content_length);
+                                               ? HTTP_BUF_SIZE
+                                               : req.response_content_length);
                         send(sClient, recvbuffer,
                              req.response_content_length > HTTP_BUF_SIZE ? HTTP_BUF_SIZE : req.response_content_length,
                              0);
                         req.response_content_length -=
-                            req.response_content_length > HTTP_BUF_SIZE ? HTTP_BUF_SIZE : req.response_content_length;
+                                req.response_content_length > HTTP_BUF_SIZE ? HTTP_BUF_SIZE
+                                                                            : req.response_content_length;
                     } while (!_read.eof() && req.response_content_length);
                     _read.close();
                 }

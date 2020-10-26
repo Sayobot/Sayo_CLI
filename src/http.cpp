@@ -101,8 +101,7 @@ int AnalysisRequest(REQUEST &req, char *const buffer) {
                             req.type = REQ_ERROR;
                             break;
                     }
-                    while (*(strp++) != ' ')
-                        ;
+                    while (*(strp++) != ' ');
                     geturi(buffer, strp);
                     UrlDecode(buffer);
                     UpChar(buffer);

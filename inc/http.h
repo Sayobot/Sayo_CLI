@@ -1,4 +1,5 @@
 #pragma once
+
 #include <stdio.h>
 //#include <Windows.h>
 #include <string>
@@ -48,7 +49,9 @@ struct REQUEST {
 };
 
 int GetGmtTime(char *szGmtTime, char l = 30);
+
 int UrlDecode(char *url);
+
 int AnalysisRequest(REQUEST &req, char *buffer);
 /*
 int InitializeReq(REQUEST &req);
