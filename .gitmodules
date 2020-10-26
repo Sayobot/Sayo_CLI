@@ -1,3 +1,6 @@
-[submodule "cmake-modules"]
-	path = cmake-modules
-	url = https://github.com/rpavlik/cmake-modules.git
+[submodule "extern/HIDAPI"]
+	path = extern/HIDAPI
+	url = https://github.com/signal11/hidapi.git
+[submodule "extern/JsonCpp"]
+	path = extern/JsonCpp
+	url = https://github.com/open-source-parsers/jsoncpp.git
