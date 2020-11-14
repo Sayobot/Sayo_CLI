@@ -45,7 +45,6 @@ endif ()
 
 ADD_EXECUTABLE(sayo_cli main.cpp o2_protocol.cpp ${DIR_SRCS} ${JsonCpp_SRCS} ${HIDAPI_SRCS})
 
-
 if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
     target_link_libraries(sayo_cli "-framework IOKit")
     target_link_libraries(sayo_cli "-framework CoreFoundation")
