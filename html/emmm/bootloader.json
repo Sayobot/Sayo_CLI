@@ -1,0 +1,31 @@
+{
+    "version": "1.0",
+    "title": "emmmm",
+    "uri": "/api/devices",
+    "methods": [
+        "read",
+        "write",
+        "save"
+    ],
+    "data": [
+        {
+            "title": "安装固件",
+            "cmd": "bootloader_code",
+            "cmd_code":0,
+            "mode": [
+                {
+                    "name": "Bootloader版本",
+                    "code": 0,
+                    "note": "检查固件更新",
+                    "values":
+                    [
+                        "const_string.json"
+                    ],
+                    "buttons":[
+                        "button_firmware_update_O2.json"
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,18 @@
+{
+    "version":1.1,
+    "title":"开始写入固件",
+    "multiple_choice":false,
+    "input_type":"button",
+    "subtype":"sendData",
+    "defVal":"",
+    "sendData":{
+        "cmd":"firmware_write",
+        "data":[
+            {
+                "uri":"https://cmcc.sayobot.cn:25225/devices/update/firmware_0x0809_0x0002.json"
+            }
+
+        ]
+    }
+    
+}
