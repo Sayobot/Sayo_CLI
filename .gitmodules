@@ -1,0 +1,6 @@
+[submodule "jsoncpp"]
+	path = jsoncpp
+	url = https://github.com/Sayobot/jsoncpp
+[submodule "hidapi"]
+	path = hidapi
+	url = https://github.com/Sayobot/hidapi
