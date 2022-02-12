@@ -1,0 +1,5 @@
+#BlackC Sayobot.cn SayoDevice 2x6F
+KERNEL=="hidraw*" \
+, ATTRS{idVendor}=="8089" \
+, ATTRS{idProduct}=="0004" \
+, MODE="0666"
