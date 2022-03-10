@@ -156,12 +156,15 @@ int enc_get_utf8_size(const unsigned char pInput)
     if (c >= 0xF0 && c < 0xF8) return 4;
     if (c >= 0xF8 && c < 0xFC) return 5;
     if (c >= 0xFC) return 6;
+
+	// Unhandled
+	return -2;
 }
 
 void utf8ToUnicode(const string& src, wstring& result)
 {
     result = L"";
-    // b1 表示UTF-8编码的pInput中的高字节, b2 表示次高字节, ...  
+    // b1 表示UTF-8编码的pInput中的高字节, b2 表示次高字节, ...
     char b1, b2, b3, b4, b5, b6;
     unsigned char* Input = NULL;
     unsigned char* pInput = NULL;
