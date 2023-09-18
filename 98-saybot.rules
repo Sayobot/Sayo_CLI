@@ -1,6 +1,11 @@
 #BlackC Sayobot.cn SayoDevice *std-F*
 KERNEL=="hidraw*" \
 , ATTRS{idVendor}=="8089" \
+, ATTRS{idProduct}=="0005" \
+, MODE="0666"
+
+KERNEL=="hidraw*" \
+, ATTRS{idVendor}=="8089" \
 , ATTRS{idProduct}=="0004" \
 , MODE="0666"
 
