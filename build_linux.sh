@@ -10,7 +10,7 @@ g++ --std=c++17 \
   src/http.cpp \
   src/tools.cpp \
   -I/usr/include \
-  ./jsoncpp/bulid/lib/libjsoncpp.a \
+  ./jsoncpp/build/lib/libjsoncpp.a \
   -lhidapi-hidraw \
   -lpthread \
   -o Sayo_CLI_Linux
